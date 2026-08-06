@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import random
+from collections import Counter
 
 from PIL import Image, ImageDraw
 
@@ -65,6 +66,20 @@ def main() -> None:
         print(f"  {uitvoer}")
 
     print(f"Klaar: {len(keuze)} previews in {preview_map}")
+
+    # Samenvatting van de huidige labelstand (zwak + handmatig samen).
+    klassen: list[str] = cfg["dataset"]["klassen"]
+    telling: Counter[int] = Counter()
+    for label_pad in (tiles_map / "labels").glob("*.txt"):
+        for regel in label_pad.read_text(encoding="utf-8").splitlines():
+            telling[int(regel.split()[0])] += 1
+    print("\nStand van de labels:")
+    for idx in range(len(klassen)):
+        print(f"  {klassen[idx]:<20} {telling.get(idx, 0)} boxen")
+    geannoteerd_pad = tiles_map / "geannoteerd.json"
+    if geannoteerd_pad.exists():
+        with open(geannoteerd_pad, encoding="utf-8") as f:
+            print(f"  ({len(json.load(f))} tegels handmatig geannoteerd)")
 
 
 if __name__ == "__main__":
