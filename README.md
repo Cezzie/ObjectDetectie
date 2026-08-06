@@ -60,18 +60,32 @@ tegelgrootte, klassen en train/val-verhouding. Begin klein; het standaardgebied 
    en zet een GPU-accelerator aan.
 2. Download na de training `best.pt` via het *Output*-tabblad.
 
-## Van 'pand' naar de echte klassen
+## Van 'pand' naar de echte klassen (Label Studio)
 
-De pipeline labelt automatisch alleen de klasse **pand** (uit de BAG). Dat is bewust:
-zo valideer je de hele keten end-to-end met gratis, foutloze labels. Daarna:
+De pipeline labelt automatisch alleen de klasse **pand** (uit de BAG). De overige klassen
+annoteer je in [Label Studio](https://labelstud.io/) (self-hosted, dus BIO-vriendelijk);
+reken op **~300 voorbeelden per klasse** voor een bruikbare v1. De lus:
 
-1. **Pre-annoteren** — laat het getrainde pand-model (of SAM) voorspellingen doen op nieuwe tegels.
-2. **Corrigeren in [Label Studio](https://labelstud.io/)** (self-hosted, dus BIO-vriendelijk) —
-   YOLO-labels zijn direct importeerbaar via `label-studio-converter`. Gebruik exact de
-   klassenlijst en -volgorde uit `config.yaml` (`dataset.klassen`); reken op **~300
-   gecorrigeerde voorbeelden per klasse** voor een bruikbare v1.
-3. Zet de geëxporteerde YOLO-labels in `data/tiles/labels/` en draai stap 04 opnieuw.
+1. **Exporteren**: `python scripts\06_export_labelstudio.py` maakt `data\labelstudio\tasks.json`
+   (met de zwakke pand-labels als pre-annotatie) en `labeling_config.xml` — de interface met
+   exact de klassen uit `config.yaml`. Gebruik `--aantal 100` voor een behapbare annotatieronde.
+2. **Label Studio starten** (eenmalig `pip install label-studio`), met lokale bestandsserving
+   zodat de tegels zichtbaar zijn:
+   ```powershell
+   $env:LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED = "true"
+   $env:LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT = "C:\pad\naar\ObjectDetectie\data\tiles"
+   label-studio start
+   ```
+3. **Project inrichten**: nieuw project → *Settings → Labeling Interface → Code* → plak de
+   inhoud van `labeling_config.xml`. Dan *Settings → Cloud Storage → Add Source Storage →
+   Local files*, absoluut pad naar `data\tiles\images` (niet synchroniseren). Importeer
+   daarna `tasks.json` via de *Import*-knop.
+4. **Annoteren**: corrigeer de pand-boxen waar nodig en teken de nieuwe klassen erbij.
+5. **Terugzetten**: exporteer als **JSON** en draai
+   `python scripts\07_import_labelstudio.py pad\naar\export.json` — geannoteerde tegels
+   vervangen hun zwakke labels, de rest blijft staan. Daarna stap 04 en opnieuw trainen.
 
+Vanaf trainingsronde 2 kan het model zelf pre-annoteren, dan is annoteren vooral corrigeren.
 Tip: taxatiedossiers waarin zonnepanelen of een aanbouw al gevalideerd zijn, zijn gratis
 positieve voorbeelden — begin met die adressen.
 
@@ -102,6 +116,8 @@ scripts/
   03_make_labels.py       BAG-contouren -> YOLO-boxen per tegel
   04_build_dataset.py     train/val-split (ruimtelijk), data.yaml, zip voor Kaggle
   05_preview.py           labels over de foto's tekenen ter controle
+  06_export_labelstudio.py  tegels + pre-annotaties naar Label Studio
+  07_import_labelstudio.py  Label Studio-export terug naar YOLO-labels
 notebooks/
   kaggle_generate_dataset.ipynb  dataset genereren óp Kaggle (internet aan, CPU)
   kaggle_train_yolo.ipynb        YOLO11-training op Kaggle (GPU)
