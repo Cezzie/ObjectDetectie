@@ -17,15 +17,23 @@ flowchart LR
 
 ## Snel starten (Windows, VS Code)
 
+Draai de genummerde stappen in volgorde — dat is de hele werkcyclus:
+
 ```powershell
-.\start.ps1              # venv + data genereren + annotatieronde klaarzetten
-.\start.ps1 -Labelen     # Label Studio starten om te annoteren
-.\start.ps1 -Trainen     # dataset bouwen, naar Kaggle uploaden, training starten
+.\stappen\1-voorbereiden.ps1            # git pull + venv + data + annotatieronde klaarzetten
+.\stappen\2-labelen.ps1                 # Label Studio starten en annoteren
+.\stappen\3-annotaties-importeren.ps1   # nieuwste export uit Downloads terugzetten
+.\stappen\4-trainen.ps1                 # uploaden, trainen op Kaggle, model klaarzetten
 ```
 
-`start.ps1` is veilig om te herhalen: gedane stappen melden zich en worden overgeslagen,
-en handmatige annotaties worden nooit overschreven. Onder de motorkap draait het de
-losse scripts, die je ook altijd zelf kunt aanroepen:
+Stap 4 wacht op de training en zet het model met versienummer in `data\models\`
+(los ophalen kan met `.\stappen\5-model-ophalen.ps1`). Daarna begint de cyclus
+opnieuw bij stap 1 — die pre-annoteert dan automatisch met je nieuwste model.
+Alles is veilig om te herhalen: gedane stappen melden zich en worden overgeslagen,
+en handmatige annotaties worden nooit overschreven.
+
+De stappen zijn dunne schillen om `start.ps1` en de losse Python-scripts,
+die je ook altijd zelf kunt aanroepen:
 
 ```powershell
 py -m venv .venv
@@ -146,6 +154,8 @@ positieve voorbeelden — begin met die adressen.
 
 ```
 config.yaml               instellingen (gebied, klassen, resolutie, splits)
+start.ps1                 motor: -Labelen / -Trainen / standaard klaarzetten
+stappen/                  genummerde werkcyclus (1 t/m 5), zie Snel starten
 scripts/
   01_fetch_bag.py         BAG-pandcontouren ophalen (PDOK WFS)
   02_download_tiles.py    luchtfototegels downloaden (PDOK WMS, herstartbaar)
