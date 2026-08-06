@@ -7,8 +7,10 @@ Vereist: stap 1 en 2.
 Uitvoer:
     data/tiles/labels/t_KKKK_RRRR.txt   YOLO-formaat: "klasse cx cy w h" (genormaliseerd)
 
-Alleen de klasse 'pand' wordt automatisch gelabeld; de overige klassen uit de
-config worden later handmatig toegevoegd/gecorrigeerd (zie README).
+De klassen 'pand' en 'schuur_bijgebouw' worden automatisch gelabeld: panden
+zonder verblijfsobject in de BAG zijn vrijwel altijd schuren, garages of
+andere bijgebouwen. De overige klassen worden later handmatig toegevoegd
+en gecorrigeerd (zie README).
 """
 
 from __future__ import annotations
@@ -48,8 +50,16 @@ def main() -> None:
             geannoteerd = set(json.load(f))
 
     with open(data_pad(cfg, "bag", "panden.geojson"), encoding="utf-8") as f:
-        panden = [shape(feat["geometry"]) for feat in json.load(f)["features"]]
+        features = json.load(f)["features"]
+    panden = [shape(feat["geometry"]) for feat in features]
     boom = STRtree(panden)
+
+    # Klasse per pand uit de BAG-attributen: geen verblijfsobject -> bijgebouw.
+    klasse_schuur = (klassen.index("schuur_bijgebouw")
+                     if "schuur_bijgebouw" in klassen else klasse_pand)
+    pand_klasse = [klasse_schuur if not feat["properties"].get("aantal_verblijfsobjecten")
+                   else klasse_pand
+                   for feat in features]
 
     with open(data_pad(cfg, "tiles", "tiles.json"), encoding="utf-8") as f:
         index = json.load(f)
@@ -57,6 +67,9 @@ def main() -> None:
     labels_map = data_pad(cfg, "tiles", "labels", ".houder").parent
     n_boxen = 0
     beschermd = 0
+    per_klasse: dict[int, int] = {}
+    for idx in set(pand_klasse):
+        per_klasse[idx] = 0
 
     for tegel_id, tegel in tqdm(index.items(), desc="labels"):
         if tegel_id in geannoteerd:
@@ -86,13 +99,16 @@ def main() -> None:
             cy = (by_min + by_max) / 2 / px
             b = (bx_max - bx_min) / px
             h = (by_max - by_min) / px
-            regels.append(f"{klasse_pand} {cx:.6f} {cy:.6f} {b:.6f} {h:.6f}")
+            regels.append(f"{pand_klasse[i]} {cx:.6f} {cy:.6f} {b:.6f} {h:.6f}")
+            per_klasse[pand_klasse[i]] += 1
 
         (labels_map / f"{tegel_id}.txt").write_text("\n".join(regels) + ("\n" if regels else ""),
                                                     encoding="utf-8")
         n_boxen += len(regels)
 
     print(f"Klaar: {n_boxen} boxen over {len(index) - beschermd} tegels -> {labels_map}")
+    for idx, aantal in sorted(per_klasse.items()):
+        print(f"  {klassen[idx]}: {aantal} boxen")
     if beschermd:
         print(f"{beschermd} handmatig geannoteerde tegels met rust gelaten "
               f"(--forceer overschrijft ze, maar dat gooit annotatiewerk weg).")

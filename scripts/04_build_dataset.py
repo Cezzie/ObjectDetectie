@@ -91,6 +91,18 @@ def main() -> None:
         shutil.copy2(label, dataset_map / "labels" / split / label.name)
         telling[split] += 1
 
+    # Externe datasets (stap 09) gaan alleen naar train: de val-split blijft
+    # puur Nederlandse tegels, zodat de metrics het echte doel meten.
+    n_extern = 0
+    extern_basis = data_pad(cfg, "extern", ".houder").parent
+    for beeld in sorted(extern_basis.glob("*/images/*")):
+        label = beeld.parent.parent / "labels" / (beeld.stem + ".txt")
+        if not label.exists():
+            continue
+        shutil.copy2(beeld, dataset_map / "images" / "train" / beeld.name)
+        shutil.copy2(label, dataset_map / "labels" / "train" / label.name)
+        n_extern += 1
+
     data_yaml = (
         f"# Dataset: {naam}\n"
         f"# Bevat gegevens van PDOK: Luchtfoto Beeldmateriaal Nederland (CC-BY 4.0) en de BAG.\n"
@@ -102,7 +114,8 @@ def main() -> None:
     )
     (dataset_map / "data.yaml").write_text(data_yaml, encoding="utf-8")
 
-    print(f"\nKlaar: {telling['train']} train- en {telling['val']} val-tegels")
+    print(f"\nKlaar: {telling['train']} train- en {telling['val']} val-tegels"
+          + (f", plus {n_extern} externe trainingsbeelden" if n_extern else ""))
     print(f"Dataset:    {dataset_map}")
     if args.geen_zip:
         return

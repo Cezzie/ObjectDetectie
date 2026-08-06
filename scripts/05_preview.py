@@ -15,7 +15,7 @@ import random
 
 from PIL import Image, ImageDraw
 
-from common import data_pad, laad_config
+from common import KLEUREN, data_pad, laad_config
 
 
 def main() -> None:
@@ -42,10 +42,13 @@ def main() -> None:
         label_pad = tiles_map / "labels" / f"{tegel_id}.txt"
         if label_pad.exists():
             for regel in label_pad.read_text(encoding="utf-8").splitlines():
-                _, cx, cy, b, h = (float(d) for d in regel.split())
+                delen = regel.split()
+                idx = int(delen[0])
+                cx, cy, b, h = (float(d) for d in delen[1:])
                 x0, y0 = (cx - b / 2) * px, (cy - h / 2) * px
                 x1, y1 = (cx + b / 2) * px, (cy + h / 2) * px
-                teken.rectangle([x0, y0, x1, y1], outline=(255, 40, 40), width=3)
+                teken.rectangle([x0, y0, x1, y1],
+                                outline=KLEUREN[idx % len(KLEUREN)], width=3)
 
         uitvoer = preview_map / f"{tegel_id}.jpg"
         beeld.save(uitvoer, quality=90)

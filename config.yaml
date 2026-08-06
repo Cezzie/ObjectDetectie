@@ -31,9 +31,10 @@ dataset:
   min_panden_per_tegel: 1   # tegels zonder panden overslaan (geen leeg platteland)
   # Klassen in YOLO-volgorde. Deze volgorde ligt VAST: de nummers staan in elk
   # labelbestand, dus tussenvoegen of herschikken breekt bestaande annotaties.
-  # Alleen 'pand' wordt automatisch gelabeld (stap 03); de overige klassen
-  # blijven leeg totdat er Label Studio-annotaties zijn — dat is onschadelijk
-  # voor de training. Gebruik in Label Studio exact dezelfde volgorde.
+  # 'pand' en 'schuur_bijgebouw' worden automatisch gelabeld uit de BAG
+  # (stap 03); de overige klassen komen uit Label Studio (stap 06/07) en/of
+  # externe datasets (stap 09). Lege klassen zijn onschadelijk voor de training.
+  # Gebruik in Label Studio exact dezelfde volgorde.
   # 'erker' ontbreekt bewust: gevelelementen zijn van bovenaf niet zichtbaar.
   klassen:
     - pand

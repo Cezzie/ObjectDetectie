@@ -8,6 +8,11 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
+# Vaste kleur per klasse-index; gedeeld door de preview (stap 05) en de
+# Label Studio-interface (stap 06). Herhaalt zich bij meer klassen.
+KLEUREN = ["#94A3B8", "#2563EB", "#F59E0B", "#10B981", "#8B5CF6",
+           "#EF4444", "#EC4899", "#14B8A6", "#06B6D4"]
+
 
 def laad_config(pad: str | Path | None = None) -> dict:
     config_pad = Path(pad) if pad else REPO_ROOT / "config.yaml"

@@ -109,9 +109,11 @@ de nieuwste versie van de gekoppelde dataset.
 
 ## Van 'pand' naar de echte klassen (Label Studio)
 
-De pipeline labelt automatisch alleen de klasse **pand** (uit de BAG). De overige klassen
+De pipeline labelt automatisch de klassen **pand** en **schuur_bijgebouw** (uit de BAG:
+een pand zonder verblijfsobject is vrijwel altijd een bijgebouw). De overige klassen
 annoteer je in [Label Studio](https://labelstud.io/) (self-hosted, dus BIO-vriendelijk);
-reken op **~300 voorbeelden per klasse** voor een bruikbare v1. De lus:
+reken op **~300 voorbeelden per klasse** voor een bruikbare v1 — of geef jezelf een
+voorsprong met een externe dataset (zie hieronder). De lus:
 
 1. **Exporteren**: `python scripts\06_export_labelstudio.py` maakt `data\labelstudio\tasks.json`
    (met de zwakke pand-labels als pre-annotatie) en `labeling_config.xml` — de interface met
@@ -132,6 +134,25 @@ reken op **~300 voorbeelden per klasse** voor een bruikbare v1. De lus:
 Vanaf trainingsronde 2 kan het model zelf pre-annoteren, dan is annoteren vooral corrigeren.
 Tip: taxatiedossiers waarin zonnepanelen of een aanbouw al gevalideerd zijn, zijn gratis
 positieve voorbeelden — begin met die adressen.
+
+## Externe datasets meebakken (minder zelf annoteren)
+
+Voor zonnepanelen en zwembaden bestaan publieke, al geannoteerde datasets — het snelst
+vind je ze op [Roboflow Universe](https://universe.roboflow.com/) (zoek "solar panel aerial",
+download in **YOLO-formaat**). Voor dakopbouwen (dakkapel/dakraam/schoorsteen) is de
+RID-dataset van de TU München het kijken waard. Meebakken gaat zo:
+
+```powershell
+python scripts\09_externe_dataset.py C:\pad\naar\uitgepakte_dataset --map "solar-panel=zonnepanelen"
+python scripts\04_build_dataset.py
+```
+
+Het script toont de externe klassenamen, hernummert alles naar onze indeling en zet het
+resultaat in `data\extern\`. Stap 04 voegt externe beelden **alleen aan train** toe;
+de val-split blijft puur Nederlandse tegels zodat de metrics je echte doel meten.
+Let op de licentie per dataset (sommige zijn research-only) en verwacht een domeinverschil
+(andere resolutie/land) — de winst zit in pre-annotatie: het model dat hierop traint tekent
+jouw tegels voor, waardoor annoteren corrigeren wordt.
 
 ## Roadmap-ideeën
 
@@ -165,6 +186,7 @@ scripts/
   06_export_labelstudio.py  tegels + pre-annotaties naar Label Studio
   07_import_labelstudio.py  Label Studio-export terug naar YOLO-labels
   08_train.py             lokaal trainen (zelfde recept als het Kaggle-notebook)
+  09_externe_dataset.py   externe YOLO-dataset hernummeren naar onze klassen
 notebooks/
   kaggle_generate_dataset.ipynb  dataset genereren óp Kaggle (internet aan, CPU)
   kaggle_train_yolo.ipynb        YOLO11-training op Kaggle (GPU)

@@ -21,11 +21,7 @@ import argparse
 import json
 import random
 
-from common import data_pad, laad_config
-
-# Vaste kleur per klasse-index; herhaalt zich als er ooit meer klassen komen.
-KLEUREN = ["#94A3B8", "#2563EB", "#F59E0B", "#10B981", "#8B5CF6",
-           "#EF4444", "#EC4899", "#14B8A6", "#06B6D4"]
+from common import KLEUREN, data_pad, laad_config
 
 
 def maak_result(klasse: str, cx: float, cy: float, b: float, h: float) -> dict:
