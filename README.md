@@ -35,15 +35,30 @@ Alles is instelbaar in [config.yaml](config.yaml): het gebied (RD-bbox), resolut
 tegelgrootte, klassen en train/val-verhouding. Begin klein; het standaardgebied is
 1,5 × 1,5 km woonwijk in Etten-Leur (~900 tegels, ~50 MB).
 
-## Trainen op Kaggle
+## Naar Kaggle: twee routes
+
+**Route A — lokaal genereren, zip uploaden**
 
 1. Eenmalig: `pip install kaggle` en een API-token via kaggle.com → *Settings → Create New Token*;
    zet het gedownloade `kaggle.json` in `C:\Users\<jij>\.kaggle\` (nooit in deze repo).
 2. `python scripts\04_build_dataset.py` print de exacte uploadcommando's
    (`kaggle datasets create -p data\kaggle_upload\...`).
-3. Maak op Kaggle een notebook van [notebooks/kaggle_train_yolo.ipynb](notebooks/kaggle_train_yolo.ipynb),
-   koppel je dataset als *Input* en zet een GPU-accelerator aan.
-4. Download na de training `best.pt` via het *Output*-tabblad.
+
+**Route B — alles óp Kaggle genereren** (geen upload vanaf je eigen machine nodig)
+
+1. Push deze repo naar GitHub.
+2. Maak op Kaggle een notebook van
+   [notebooks/kaggle_generate_dataset.ipynb](notebooks/kaggle_generate_dataset.ipynb),
+   zet *Settings → Internet* op **On** (CPU volstaat) en vul bovenin de repo-URL in
+   (privérepo: secret `GITHUB_TOKEN` via *Add-ons → Secrets*).
+3. *Save Version → Save & Run All* — de dataset verschijnt als notebook-output.
+
+**Trainen** (beide routes)
+
+1. Maak op Kaggle een notebook van [notebooks/kaggle_train_yolo.ipynb](notebooks/kaggle_train_yolo.ipynb),
+   koppel via *Add Input* je dataset (route A) of de notebook-output (route B),
+   en zet een GPU-accelerator aan.
+2. Download na de training `best.pt` via het *Output*-tabblad.
 
 ## Van 'pand' naar de echte klassen
 
@@ -88,6 +103,7 @@ scripts/
   04_build_dataset.py     train/val-split (ruimtelijk), data.yaml, zip voor Kaggle
   05_preview.py           labels over de foto's tekenen ter controle
 notebooks/
-  kaggle_train_yolo.ipynb YOLO11-training op Kaggle (GPU)
+  kaggle_generate_dataset.ipynb  dataset genereren óp Kaggle (internet aan, CPU)
+  kaggle_train_yolo.ipynb        YOLO11-training op Kaggle (GPU)
 data/                     gegenereerde data (niet in git)
 ```

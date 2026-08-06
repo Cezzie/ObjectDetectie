@@ -34,6 +34,9 @@ def split_voor_blok(dataset_naam: str, blok: tuple[int, int], val_fractie: float
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default=None, help="pad naar config.yaml")
+    parser.add_argument("--geen-zip", action="store_true",
+                        help="alleen de datasetmap bouwen, geen zip voor de Kaggle CLI "
+                             "(gebruik dit als het script óp Kaggle draait)")
     args = parser.parse_args()
 
     cfg = laad_config(args.config)
@@ -74,6 +77,11 @@ def main() -> None:
     )
     (dataset_map / "data.yaml").write_text(data_yaml, encoding="utf-8")
 
+    print(f"\nKlaar: {telling['train']} train- en {telling['val']} val-tegels")
+    print(f"Dataset:    {dataset_map}")
+    if args.geen_zip:
+        return
+
     upload_map = data_pad(cfg, "kaggle_upload", naam, ".houder").parent
     upload_map.mkdir(parents=True, exist_ok=True)
     print("Zip maken ...")
@@ -86,8 +94,6 @@ def main() -> None:
     with open(upload_map / "dataset-metadata.json", "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2)
 
-    print(f"\nKlaar: {telling['train']} train- en {telling['val']} val-tegels")
-    print(f"Dataset:    {dataset_map}")
     print(f"Kaggle-zip: {zip_pad}")
     print(
         "\nUploaden naar Kaggle (eenmalig 'pip install kaggle' + API-token, zie README):\n"
