@@ -111,9 +111,11 @@ def main() -> None:
     upload_map.mkdir(parents=True, exist_ok=True)
     print("Zip maken ...")
     zip_pad = shutil.make_archive(str(upload_map / naam), "zip", dataset_map)
+    gebruiker = cfg.get("kaggle", {}).get("gebruikersnaam", "JOUW_KAGGLE_GEBRUIKERSNAAM")
     metadata = {
         "title": naam,
-        "id": f"JOUW_KAGGLE_GEBRUIKERSNAAM/{naam}",
+        # Kaggle-slugs gebruiken koppeltekens, geen underscores.
+        "id": f"{gebruiker}/{naam.replace('_', '-')}",
         "licenses": [{"name": "CC-BY-SA-4.0"}],
     }
     with open(upload_map / "dataset-metadata.json", "w", encoding="utf-8") as f:
@@ -121,10 +123,9 @@ def main() -> None:
 
     print(f"Kaggle-zip: {zip_pad}")
     print(
-        "\nUploaden naar Kaggle (eenmalig 'pip install kaggle' + API-token, zie README):\n"
-        f"  1. Zet je Kaggle-gebruikersnaam in {upload_map / 'dataset-metadata.json'}\n"
-        f"  2. Nieuwe dataset:   kaggle datasets create -p {upload_map.relative_to(REPO_ROOT)}\n"
-        f"     Nieuwe versie:    kaggle datasets version -p {upload_map.relative_to(REPO_ROOT)} -m \"update\""
+        f"\nUploaden naar Kaggle (als {metadata['id']}):\n"
+        f"  Nieuwe dataset:   kaggle datasets create -p {upload_map.relative_to(REPO_ROOT)}\n"
+        f"  Nieuwe versie:    kaggle datasets version -p {upload_map.relative_to(REPO_ROOT)} -m \"update\""
     )
 
 

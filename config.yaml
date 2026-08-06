@@ -46,5 +46,8 @@ dataset:
     - veranda_overkapping
     - zwembad
 
+kaggle:
+  gebruikersnaam: jayscar
+
 paden:
   data: data

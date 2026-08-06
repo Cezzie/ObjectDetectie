@@ -1,5 +1,5 @@
 {
-  "id": "JOUW_KAGGLE_GEBRUIKERSNAAM/bwb-daken-training",
+  "id": "jayscar/bwb-daken-training",
   "title": "BWB daken training",
   "code_file": "kaggle_train_yolo.ipynb",
   "language": "python",
@@ -7,7 +7,7 @@
   "is_private": "true",
   "enable_gpu": "true",
   "enable_internet": "true",
-  "dataset_sources": ["JOUW_KAGGLE_GEBRUIKERSNAAM/bwb_daken_v1"],
+  "dataset_sources": ["jayscar/bwb-daken-v1"],
   "competition_sources": [],
   "kernel_sources": []
 }
