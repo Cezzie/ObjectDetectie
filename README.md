@@ -19,6 +19,7 @@ flowchart LR
 
 ```powershell
 .\start.ps1              # venv + data genereren + annotatieronde klaarzetten
+.\start.ps1 -Labelen     # Label Studio starten om te annoteren
 .\start.ps1 -Trainen     # dataset bouwen, naar Kaggle uploaden, training starten
 ```
 
@@ -107,13 +108,10 @@ reken op **~300 voorbeelden per klasse** voor een bruikbare v1. De lus:
 1. **Exporteren**: `python scripts\06_export_labelstudio.py` maakt `data\labelstudio\tasks.json`
    (met de zwakke pand-labels als pre-annotatie) en `labeling_config.xml` — de interface met
    exact de klassen uit `config.yaml`. Gebruik `--aantal 100` voor een behapbare annotatieronde.
-2. **Label Studio starten** (eenmalig `pip install label-studio`), met lokale bestandsserving
-   zodat de tegels zichtbaar zijn:
-   ```powershell
-   $env:LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED = "true"
-   $env:LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT = "C:\pad\naar\ObjectDetectie\data\tiles"
-   label-studio start
-   ```
+2. **Label Studio starten**: `.\start.ps1 -Labelen` — installeert Label Studio zo nodig en
+   start hem met lokale bestandsserving (document-root `data\tiles`) zodat de tegels
+   zichtbaar zijn. Handmatig kan ook: zet `LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED=true`
+   en `LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT=<repo>\data\tiles` en draai `label-studio start`.
 3. **Project inrichten**: nieuw project → *Settings → Labeling Interface → Code* → plak de
    inhoud van `labeling_config.xml`. Dan *Settings → Cloud Storage → Add Source Storage →
    Local files*, absoluut pad naar `data\tiles\images` (niet synchroniseren). Importeer
