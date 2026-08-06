@@ -1,0 +1,14 @@
+# Gegenereerde data (kan groot worden; wordt lokaal opnieuw gegenereerd)
+data/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Kaggle API-token hoort NOOIT in de repo
+kaggle.json
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,43 @@
+# Centrale configuratie voor de datageneratie-pipeline.
+# Alle coördinaten zijn in RD New (EPSG:28992) — de projectie waarin zowel
+# de BAG als de PDOK-luchtfoto's geleverd worden.
+
+gebied:
+  # [xmin, ymin, xmax, ymax] — pilot: woonwijk in Etten-Leur (BWB-gebied).
+  # Vergroot dit stapsgewijs; 1,5 x 1,5 km levert ~900 tegels (~50 MB) op.
+  bbox: [103500, 396500, 105000, 398000]
+
+luchtfoto:
+  wms_url: https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0
+  # Actueel_orthoHR = meest recente winteropname (8 cm, sinds 2025 deels 5 cm).
+  # Alternatief: Actueel_ortho25 (25 cm zomeropname, meer bladbedekking).
+  laag: Actueel_orthoHR
+  resolutie: 0.08        # meter per pixel
+  tegelgrootte: 640      # pixels; 640 px x 0,08 m = 51,2 m per tegel
+  overlap: 0.0           # fractie overlap tussen tegels (0.25 = 25%)
+  formaat: jpeg
+  wacht_seconden: 0.1    # pauze tussen WMS-verzoeken (fair use PDOK)
+
+bag:
+  wfs_url: https://service.pdok.nl/lv/bag/wfs/v2_0
+  alleen_in_gebruik: true   # alleen panden met status "Pand in gebruik"
+
+dataset:
+  naam: bwb_daken_v1
+  val_fractie: 0.2
+  # Tegels worden per blok van blok_maat meter aan train óf val toegewezen,
+  # zodat buurpanden niet in beide splitsen belanden (spatial leakage).
+  blok_maat: 500
+  min_panden_per_tegel: 1   # tegels zonder panden overslaan (geen leeg platteland)
+  # Klassen in YOLO-volgorde. 'pand' wordt automatisch gelabeld vanuit de BAG.
+  # Overige klassen ontstaan via handmatige correctie in Label Studio — zie README.
+  klassen:
+    - pand
+    # - zonnepanelen
+    # - dakkapel
+    # - dakraam
+    # - schoorsteen
+    # - zwembad
+
+paden:
+  data: data
