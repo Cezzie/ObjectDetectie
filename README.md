@@ -35,6 +35,20 @@ Alles is instelbaar in [config.yaml](config.yaml): het gebied (RD-bbox), resolut
 tegelgrootte, klassen en train/val-verhouding. Begin klein; het standaardgebied is
 1,5 × 1,5 km woonwijk in Etten-Leur (~900 tegels, ~50 MB).
 
+## Trainen op de devbox (zonder Kaggle)
+
+De Kaggle-notebooks zijn dunne schillen om dezelfde scripts; lokaal trainen kan ook:
+
+```powershell
+pip install -r requirements-train.txt   # eenmalig; heeft je machine een NVIDIA-GPU,
+                                        # installeer dan eerst torch met CUDA (zie pytorch.org)
+python scripts\08_train.py              # traint op data\dataset\<naam>, gewichten in data\runs\
+```
+
+Check met `nvidia-smi` of er een GPU is. Zonder GPU: prima voor proefrondes
+(`--model yolo11n.pt --epochs 30`), maar voor serieuze trainingen is Kaggle's
+gratis GPU sneller. Zelfde dataset, zelfde recept — je kunt vrij wisselen.
+
 ## Naar Kaggle: twee routes
 
 **Route A — lokaal genereren, zip uploaden**
@@ -118,6 +132,7 @@ scripts/
   05_preview.py           labels over de foto's tekenen ter controle
   06_export_labelstudio.py  tegels + pre-annotaties naar Label Studio
   07_import_labelstudio.py  Label Studio-export terug naar YOLO-labels
+  08_train.py             lokaal trainen (zelfde recept als het Kaggle-notebook)
 notebooks/
   kaggle_generate_dataset.ipynb  dataset genereren óp Kaggle (internet aan, CPU)
   kaggle_train_yolo.ipynb        YOLO11-training op Kaggle (GPU)

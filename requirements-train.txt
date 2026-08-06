@@ -1,0 +1,4 @@
+# Alleen nodig om lokaal te trainen (stap 08); trekt PyTorch mee (fors).
+# Heeft je machine een NVIDIA-GPU, installeer dan eerst torch met CUDA
+# volgens https://pytorch.org/get-started/locally/ en daarna dit bestand.
+ultralytics>=8.3
