@@ -18,8 +18,17 @@ flowchart LR
 ## Snel starten (Windows, VS Code)
 
 ```powershell
+.\start.ps1              # venv + data genereren + annotatieronde klaarzetten
+.\start.ps1 -Trainen     # dataset bouwen, naar Kaggle uploaden, training starten
+```
+
+`start.ps1` is veilig om te herhalen: gedane stappen melden zich en worden overgeslagen,
+en handmatige annotaties worden nooit overschreven. Onder de motorkap draait het de
+losse scripts, die je ook altijd zelf kunt aanroepen:
+
+```powershell
 py -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 
 python scripts\01_fetch_bag.py        # BAG-pandcontouren binnen het gebied
