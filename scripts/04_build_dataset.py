@@ -10,6 +10,7 @@ Uitvoer:
 
 De train/val-splitsing gebeurt per blok van `dataset.blok_maat` meter, zodat
 aangrenzende tegels (en dus dezelfde buurt) nooit in beide splitsen zitten.
+De keuze is deterministisch en garandeert dat val nooit leeg is.
 """
 
 from __future__ import annotations
@@ -24,11 +25,28 @@ from tqdm import tqdm
 from common import REPO_ROOT, data_pad, laad_config
 
 
-def split_voor_blok(dataset_naam: str, blok: tuple[int, int], val_fractie: float) -> str:
-    """Deterministische train/val-keuze per ruimtelijk blok."""
-    sleutel = f"{dataset_naam}:{blok[0]}:{blok[1]}".encode()
-    dobbel = int(hashlib.md5(sleutel).hexdigest(), 16) % 1000
-    return "val" if dobbel < val_fractie * 1000 else "train"
+def kies_val_tegels(naam: str, geldig: list[tuple], val_fractie: float) -> set[str]:
+    """Bepaal deterministisch welke tegel-ids naar val gaan.
+
+    Blokken worden op hash gerangschikt en de eerste ~val_fractie wordt val,
+    zodat val nooit leeg is (het oude kansdrempel-schema kon bij weinig
+    blokken toevallig alles aan train toewijzen). Is er maar één blok, dan
+    valt de splitsing terug op tegelniveau.
+    """
+    def rang(sleutel: str) -> str:
+        return hashlib.md5(f"{naam}:{sleutel}".encode()).hexdigest()
+
+    blokken = sorted({blok for *_, blok in geldig}, key=lambda b: rang(f"{b[0]}:{b[1]}"))
+    if len(blokken) > 1:
+        n_val = min(len(blokken) - 1, max(1, round(val_fractie * len(blokken))))
+        val_blokken = set(blokken[:n_val])
+        return {tegel_id for tegel_id, *_, blok in geldig if blok in val_blokken}
+
+    tegels = sorted((tegel_id for tegel_id, *_ in geldig), key=rang)
+    if len(tegels) < 2:
+        return set()
+    n_val = min(len(tegels) - 1, max(1, round(val_fractie * len(tegels))))
+    return set(tegels[:n_val])
 
 
 def main() -> None:
@@ -54,14 +72,21 @@ def main() -> None:
         (dataset_map / "images" / split).mkdir(parents=True)
         (dataset_map / "labels" / split).mkdir(parents=True)
 
-    telling = {"train": 0, "val": 0}
-    for tegel_id, tegel in tqdm(index.items(), desc="kopiëren"):
+    geldig = []
+    for tegel_id, tegel in index.items():
         beeld = tiles_map / tegel["image"]
         label = tiles_map / "labels" / f"{tegel_id}.txt"
         if not beeld.exists() or not label.exists():
             continue
         blok = (int(tegel["bbox"][0] // ds["blok_maat"]), int(tegel["bbox"][1] // ds["blok_maat"]))
-        split = split_voor_blok(naam, blok, ds["val_fractie"])
+        geldig.append((tegel_id, beeld, label, blok))
+    if not geldig:
+        raise SystemExit("Geen tegels met beeld én label gevonden — draai eerst stap 02 en 03.")
+
+    val_tegels = kies_val_tegels(naam, geldig, ds["val_fractie"])
+    telling = {"train": 0, "val": 0}
+    for tegel_id, beeld, label, _ in tqdm(geldig, desc="kopiëren"):
+        split = "val" if tegel_id in val_tegels else "train"
         shutil.copy2(beeld, dataset_map / "images" / split / beeld.name)
         shutil.copy2(label, dataset_map / "labels" / split / label.name)
         telling[split] += 1
