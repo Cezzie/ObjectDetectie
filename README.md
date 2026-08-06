@@ -156,6 +156,10 @@ jouw tegels voor, waardoor annoteren corrigeren wordt.
 
 ## Roadmap-ideeën
 
+- **Mutatiedetectie** (zonnepanelen geplaatst, dakkapel gebouwd, verbouwing gestart):
+  uitgewerkt plan in [docs/mutatiedetectie.md](docs/mutatiedetectie.md) — PDOK levert
+  alle jaargangen op ons vaste tegelgrid, dus voor/na-paren zijn gratis.
+
 - **Aanbouw-kandidaten**: verschil tussen BAG-contour en AHN-hoogtemasker (of 3DBAG LoD2.2-dakvlakken).
 - **CIR-luchtfoto** (infrarood, ook op PDOK) om dakvlak van vegetatie te scheiden.
 - **Overlap** in `config.yaml` op 0.25 zetten zodat panden op tegelranden vaker volledig in beeld zijn.
