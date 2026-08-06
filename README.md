@@ -191,6 +191,7 @@ scripts/
   07_import_labelstudio.py  Label Studio-export terug naar YOLO-labels
   08_train.py             lokaal trainen (zelfde recept als het Kaggle-notebook)
   09_externe_dataset.py   externe YOLO-dataset hernummeren naar onze klassen
+  11_verschilbeeld.py     verschilcomposieten uit twee jaargangen (mutatiedetectie)
 notebooks/
   kaggle_generate_dataset.ipynb  dataset genereren óp Kaggle (internet aan, CPU)
   kaggle_train_yolo.ipynb        YOLO11-training op Kaggle (GPU)

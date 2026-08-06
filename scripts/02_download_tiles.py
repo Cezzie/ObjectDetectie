@@ -30,10 +30,15 @@ def main() -> None:
     parser.add_argument("--config", default=None, help="pad naar config.yaml")
     parser.add_argument("--max-tegels", type=int, default=None,
                         help="stop na N tegels (handig om klein te testen)")
+    parser.add_argument("--laag", default=None,
+                        help="andere jaargang-laag (bijv. 2022_orthoHR); "
+                             "uitvoer komt dan in data/tiles_<laag>/")
     args = parser.parse_args()
 
     cfg = laad_config(args.config)
     foto = cfg["luchtfoto"]
+    laag = args.laag or foto["laag"]
+    map_naam = "tiles" if laag == foto["laag"] else f"tiles_{laag}"
     tegel_px = foto["tegelgrootte"]
     tegel_m = tegel_px * foto["resolutie"]
     min_panden = cfg["dataset"]["min_panden_per_tegel"]
@@ -46,13 +51,13 @@ def main() -> None:
     boom = STRtree(panden)
     print(f"{len(panden)} pandcontouren geladen")
 
-    index_pad = data_pad(cfg, "tiles", "tiles.json")
+    index_pad = data_pad(cfg, map_naam, "tiles.json")
     index: dict[str, dict] = {}
     if index_pad.exists():
         with open(index_pad, encoding="utf-8") as f:
             index = json.load(f)
 
-    afbeeldingen_map = data_pad(cfg, "tiles", "images", ".houder").parent
+    afbeeldingen_map = data_pad(cfg, map_naam, "images", ".houder").parent
     sessie = make_session()
     gedownload = 0
     overgeslagen_leeg = 0
@@ -75,7 +80,7 @@ def main() -> None:
                 continue
 
             beeld = wms_get_map(
-                sessie, foto["wms_url"], foto["laag"], tegel_bbox,
+                sessie, foto["wms_url"], laag, tegel_bbox,
                 breedte=tegel_px, hoogte=tegel_px, formaat=foto["formaat"],
             )
             bestand.write_bytes(beeld)
@@ -85,7 +90,7 @@ def main() -> None:
                 "px": tegel_px,
                 "resolutie": foto["resolutie"],
                 "n_panden": n_panden,
-                "laag": foto["laag"],
+                "laag": laag,
             }
             gedownload += 1
             time.sleep(foto["wacht_seconden"])

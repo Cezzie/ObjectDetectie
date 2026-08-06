@@ -104,6 +104,24 @@ licht- en seizoensverschil dan A, en vangt ook veranderingen buiten de klassenli
 - **Wanneer**: pas als A structureel te veel ruis geeft of veranderingen mist. Dit is
   een eigen trainingstraject (andere dataloader, andere metriek) — reken op serieus werk.
 
+**Praktische tussenvariant: verschilcomposiet + YOLO (geïmplementeerd als stap 11).**
+Smelt de twee jaargangen samen tot één beeld: rood kanaal = oude foto, groen + blauw =
+nieuwe foto. Verdwenen objecten kleuren rood, nieuwe cyaan, ongewijzigd blijft grijs.
+Op die composieten traint de béstaande YOLO-pipeline gewoon boxen — met verander-klassen
+als `zonnepanelen_geplaatst`, `dakkapel_gebouwd`, `nieuwbouw`. Zo krijg je een model dat
+effectief beide foto's ziet, zonder nieuwe toolchain (zelfde Label Studio, zelfde Kaggle):
+
+```powershell
+python scripts\02_download_tiles.py --laag 2022_orthoHR
+python scripts\02_download_tiles.py --laag 2025_orthoHR
+python scripts\11_verschilbeeld.py --oud tiles_2022_orthoHR --nieuw tiles_2025_orthoHR
+```
+
+De drieluiken in `data\verander\...\preview\` (oud | nieuw | composiet) tonen meteen ook
+de uitdaging: omvalling geeft rood/cyaan-randjes langs álle dakranden. Een getraind model
+leert die uniforme randruis negeren; naïef pixels vergelijken kan dat niet — dat is
+precies het bestaansrecht van de modelroute.
+
 ### C. AHN-hoogteverschil (parallel spoor, geen ML nodig)
 
 DSM-verschil tussen AHN-versies, gesneden met BAG-contouren:
