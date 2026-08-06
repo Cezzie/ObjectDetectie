@@ -94,8 +94,12 @@ def main() -> None:
         with open(index_pad, "w", encoding="utf-8") as f:
             json.dump(index, f, indent=1)
 
-    print(f"Klaar: {gedownload} nieuw gedownload, {len(index)} tegels in {index_pad}, "
-          f"{overgeslagen_leeg} tegels zonder panden overgeslagen")
+    if gedownload == 0:
+        print(f"Al gedaan: alle {len(index)} tegels stonden al op schijf "
+              f"({overgeslagen_leeg} tegels zonder panden overgeslagen).")
+    else:
+        print(f"Klaar: {gedownload} nieuw gedownload, {len(index)} tegels in {index_pad}, "
+              f"{overgeslagen_leeg} tegels zonder panden overgeslagen")
 
 
 if __name__ == "__main__":

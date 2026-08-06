@@ -64,6 +64,8 @@ def main() -> None:
                              "in plaats van de zwakke labels uit stap 3")
     parser.add_argument("--conf", type=float, default=0.25,
                         help="minimale confidence voor modelvoorspellingen (standaard 0.25)")
+    parser.add_argument("--ook-geannoteerde", action="store_true",
+                        help="ook tegels exporteren die al handmatig geannoteerd zijn")
     args = parser.parse_args()
 
     model = None
@@ -81,6 +83,13 @@ def main() -> None:
         index = json.load(f)
 
     keuze = sorted(index)
+    overgeslagen = 0
+    geannoteerd_pad = tiles_map / "geannoteerd.json"
+    if geannoteerd_pad.exists() and not args.ook_geannoteerde:
+        with open(geannoteerd_pad, encoding="utf-8") as f:
+            geannoteerd = set(json.load(f))
+        overgeslagen = sum(1 for t in keuze if t in geannoteerd)
+        keuze = [t for t in keuze if t not in geannoteerd]
     if args.aantal is not None and args.aantal < len(keuze):
         keuze = sorted(random.Random(42).sample(keuze, args.aantal))
 
@@ -139,6 +148,9 @@ def main() -> None:
     )
 
     print(f"Klaar: {len(taken)} taken ({n_pre} pre-annotaties) -> {ls_map / 'tasks.json'}")
+    if overgeslagen:
+        print(f"{overgeslagen} al geannoteerde tegels overgeslagen "
+              f"(--ook-geannoteerde neemt ze toch mee).")
     print(f"Labelinterface -> {ls_map / 'labeling_config.xml'}")
 
 

@@ -21,10 +21,22 @@ def main() -> None:
     parser.add_argument("--config", default=None, help="pad naar config.yaml")
     parser.add_argument("--bbox", type=parse_bbox, default=None,
                         help="RD-bbox die de config overschrijft: xmin,ymin,xmax,ymax")
+    parser.add_argument("--forceer", action="store_true",
+                        help="opnieuw ophalen, ook als de data er al staat")
     args = parser.parse_args()
 
     cfg = laad_config(args.config)
     bbox = args.bbox or cfg["gebied"]["bbox"]
+
+    uitvoer = data_pad(cfg, "bag", "panden.geojson")
+    if uitvoer.exists() and not args.forceer:
+        with open(uitvoer, encoding="utf-8") as f:
+            bestaand = json.load(f)
+        if bestaand.get("bbox_rd") == list(bbox):
+            print(f"Al gedaan: {uitvoer} bevat {len(bestaand['features'])} panden voor deze bbox.")
+            print("Gebruik --forceer om opnieuw op te halen (bijv. voor BAG-mutaties).")
+            return
+        print("Bestaande data is van een ándere bbox — er wordt opnieuw opgehaald.")
 
     print(f"BAG-panden ophalen binnen RD-bbox {bbox} ...")
     sessie = make_session()
@@ -42,7 +54,6 @@ def main() -> None:
         "bron": "BAG via PDOK (https://www.pdok.nl)",
         "features": features,
     }
-    uitvoer = data_pad(cfg, "bag", "panden.geojson")
     with open(uitvoer, "w", encoding="utf-8") as f:
         json.dump(collectie, f)
 

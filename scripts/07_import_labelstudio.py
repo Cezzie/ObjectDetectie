@@ -35,7 +35,7 @@ def main() -> None:
 
     per_klasse: Counter[str] = Counter()
     onbekend: Counter[str] = Counter()
-    n_tegels = 0
+    bijgewerkt: list[str] = []
 
     for taak in taken:
         beeld_ref = taak.get("data", {}).get("image", "")
@@ -66,9 +66,20 @@ def main() -> None:
 
         (labels_map / f"{tegel_id}.txt").write_text(
             "\n".join(regels) + ("\n" if regels else ""), encoding="utf-8")
-        n_tegels += 1
+        bijgewerkt.append(tegel_id)
 
-    print(f"Klaar: {n_tegels} tegels bijgewerkt in {labels_map}")
+    # Administratie zodat stap 03 en 06 deze tegels voortaan met rust laten.
+    geannoteerd_pad = labels_map.parent / "geannoteerd.json"
+    geannoteerd: set[str] = set(bijgewerkt)
+    if geannoteerd_pad.exists():
+        with open(geannoteerd_pad, encoding="utf-8") as f:
+            geannoteerd |= set(json.load(f))
+    with open(geannoteerd_pad, "w", encoding="utf-8") as f:
+        json.dump(sorted(geannoteerd), f, indent=1)
+
+    n_tegels = len(bijgewerkt)
+    print(f"Klaar: {n_tegels} tegels bijgewerkt in {labels_map} "
+          f"(totaal {len(geannoteerd)} geannoteerde tegels geregistreerd)")
     for naam, aantal in sorted(per_klasse.items()):
         print(f"  {naam}: {aantal} boxen")
     for naam, aantal in onbekend.items():

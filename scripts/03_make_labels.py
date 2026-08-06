@@ -31,11 +31,21 @@ MIN_BOX_PX = 6
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default=None, help="pad naar config.yaml")
+    parser.add_argument("--forceer", action="store_true",
+                        help="ook handmatig geannoteerde tegels overschrijven met zwakke labels "
+                             "(LET OP: dat gooit annotatiewerk weg)")
     args = parser.parse_args()
 
     cfg = laad_config(args.config)
     klassen: list[str] = cfg["dataset"]["klassen"]
     klasse_pand = klassen.index("pand")
+
+    # Tegels die via Label Studio zijn geannoteerd (stap 07) niet overschrijven.
+    geannoteerd_pad = data_pad(cfg, "tiles", "geannoteerd.json")
+    geannoteerd: set[str] = set()
+    if geannoteerd_pad.exists() and not args.forceer:
+        with open(geannoteerd_pad, encoding="utf-8") as f:
+            geannoteerd = set(json.load(f))
 
     with open(data_pad(cfg, "bag", "panden.geojson"), encoding="utf-8") as f:
         panden = [shape(feat["geometry"]) for feat in json.load(f)["features"]]
@@ -46,8 +56,12 @@ def main() -> None:
 
     labels_map = data_pad(cfg, "tiles", "labels", ".houder").parent
     n_boxen = 0
+    beschermd = 0
 
     for tegel_id, tegel in tqdm(index.items(), desc="labels"):
+        if tegel_id in geannoteerd:
+            beschermd += 1
+            continue
         xmin, ymin, xmax, ymax = tegel["bbox"]
         res = tegel["resolutie"]
         px = tegel["px"]
@@ -78,7 +92,10 @@ def main() -> None:
                                                     encoding="utf-8")
         n_boxen += len(regels)
 
-    print(f"Klaar: {n_boxen} boxen over {len(index)} tegels -> {labels_map}")
+    print(f"Klaar: {n_boxen} boxen over {len(index) - beschermd} tegels -> {labels_map}")
+    if beschermd:
+        print(f"{beschermd} handmatig geannoteerde tegels met rust gelaten "
+              f"(--forceer overschrijft ze, maar dat gooit annotatiewerk weg).")
 
 
 if __name__ == "__main__":
