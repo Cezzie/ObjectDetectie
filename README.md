@@ -67,10 +67,10 @@ zo valideer je de hele keten end-to-end met gratis, foutloze labels. Daarna:
 
 1. **Pre-annoteren** — laat het getrainde pand-model (of SAM) voorspellingen doen op nieuwe tegels.
 2. **Corrigeren in [Label Studio](https://labelstud.io/)** (self-hosted, dus BIO-vriendelijk) —
-   YOLO-labels zijn direct importeerbaar via `label-studio-converter`. Voeg daar de klassen
-   zonnepanelen, dakkapel, dakraam, schoorsteen en zwembad toe; reken op **~300 gecorrigeerde
-   voorbeelden per klasse** voor een bruikbare v1.
-3. Zet de nieuwe klassen aan in `config.yaml` (`dataset.klassen`) en draai stap 04 opnieuw.
+   YOLO-labels zijn direct importeerbaar via `label-studio-converter`. Gebruik exact de
+   klassenlijst en -volgorde uit `config.yaml` (`dataset.klassen`); reken op **~300
+   gecorrigeerde voorbeelden per klasse** voor een bruikbare v1.
+3. Zet de geëxporteerde YOLO-labels in `data/tiles/labels/` en draai stap 04 opnieuw.
 
 Tip: taxatiedossiers waarin zonnepanelen of een aanbouw al gevalideerd zijn, zijn gratis
 positieve voorbeelden — begin met die adressen.

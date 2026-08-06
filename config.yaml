@@ -29,15 +29,22 @@ dataset:
   # zodat buurpanden niet in beide splitsen belanden (spatial leakage).
   blok_maat: 500
   min_panden_per_tegel: 1   # tegels zonder panden overslaan (geen leeg platteland)
-  # Klassen in YOLO-volgorde. 'pand' wordt automatisch gelabeld vanuit de BAG.
-  # Overige klassen ontstaan via handmatige correctie in Label Studio — zie README.
+  # Klassen in YOLO-volgorde. Deze volgorde ligt VAST: de nummers staan in elk
+  # labelbestand, dus tussenvoegen of herschikken breekt bestaande annotaties.
+  # Alleen 'pand' wordt automatisch gelabeld (stap 03); de overige klassen
+  # blijven leeg totdat er Label Studio-annotaties zijn — dat is onschadelijk
+  # voor de training. Gebruik in Label Studio exact dezelfde volgorde.
+  # 'erker' ontbreekt bewust: gevelelementen zijn van bovenaf niet zichtbaar.
   klassen:
     - pand
-    # - zonnepanelen
-    # - dakkapel
-    # - dakraam
-    # - schoorsteen
-    # - zwembad
+    - zonnepanelen
+    - dakkapel
+    - dakraam
+    - schoorsteen
+    - schuur_bijgebouw
+    - aanbouw
+    - veranda_overkapping
+    - zwembad
 
 paden:
   data: data
