@@ -74,6 +74,21 @@ gratis GPU sneller. Zelfde dataset, zelfde recept — je kunt vrij wisselen.
    en zet een GPU-accelerator aan.
 2. Download na de training `best.pt` via het *Output*-tabblad.
 
+**Trainen vanaf de terminal** (zonder browser)
+
+Eenmalig: vul in [notebooks/kernel-metadata.json](notebooks/kernel-metadata.json) tweemaal je
+Kaggle-gebruikersnaam in; controleer de dataset-slug met `kaggle datasets list -m`. Daarna:
+
+```powershell
+kaggle kernels push -p notebooks                                  # uploadt én start de training
+kaggle kernels status GEBRUIKERSNAAM/bwb-daken-training           # tot "complete"
+kaggle kernels output GEBRUIKERSNAAM/bwb-daken-training -p data\kaggle_output
+Copy-Item data\kaggle_output\runs\bwb_daken\weights\best.pt data\models\bwb_daken_vX.pt
+```
+
+Elke push start een verse run (en verbruikt dus GPU-quotum); de run pakt automatisch
+de nieuwste versie van de gekoppelde dataset.
+
 ## Van 'pand' naar de echte klassen (Label Studio)
 
 De pipeline labelt automatisch alleen de klasse **pand** (uit de BAG). De overige klassen

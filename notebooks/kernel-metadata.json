@@ -1,0 +1,13 @@
+{
+  "id": "JOUW_KAGGLE_GEBRUIKERSNAAM/bwb-daken-training",
+  "title": "BWB daken training",
+  "code_file": "kaggle_train_yolo.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_internet": "true",
+  "dataset_sources": ["JOUW_KAGGLE_GEBRUIKERSNAAM/bwb_daken_v1"],
+  "competition_sources": [],
+  "kernel_sources": []
+}
