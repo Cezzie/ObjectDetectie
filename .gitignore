@@ -1,6 +1,9 @@
 # Gegenereerde data (kan groot worden; wordt lokaal opnieuw gegenereerd)
 data/
 
+# Persoonlijke notebook-kopieën (eigen runs die git nooit mag aanraken)
+notebooks/lokaal/
+
 # Python
 .venv/
 __pycache__/
