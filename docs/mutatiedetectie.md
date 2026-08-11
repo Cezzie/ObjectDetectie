@@ -68,6 +68,10 @@ verder uit elkaar dan de luchtfoto's.
 
 ## 2. Drie strategieën, in volgorde van aanbevolen uitvoering
 
+> **Uitwerking van de verschilscore-techniek** (blur, normalisatie per foto,
+> verschuivings-tolerant aftrekken, drempelkeuze): zie
+> [verschilscore-techniek.md](verschilscore-techniek.md).
+
 ### A. Verschil-van-detecties (start hier — geen nieuw model nodig)
 
 Draai de objectdetector die we nu bouwen op tegels van jaargang t1 én t2, en vergelijk
