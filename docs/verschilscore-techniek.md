@@ -40,11 +40,19 @@ foto 2025 ─► grijswaarden ─► blur ─► normaliseren ─┘        │ 
    identiek is, vindt in één van de verschuivingen een goede match → klein verschil.
    Een dak waar zonnepanelen op verschenen matcht in géén enkele verschuiving → het
    verschil blijft groot.
-5. **Aggregeren per pand.** Het gemiddelde van de minimum-verschilkaart binnen de
-   omsluitende box van de BAG-pandcontour → één getal per pand.
-6. **Drempel.** Het 99e percentiel van alle scores (instelbaar via `DREMPEL_PCT`);
-   alles erboven is een "visuele detectie" en wordt gesplitst in *verklaard door de
-   BAG* en *onverklaard* (de werkvoorraad).
+5. **Aggregeren per pand, binnen de contour.** Het gemiddelde van de
+   minimum-verschilkaart binnen de **pandcontour zelf** (niet de omsluitende box) →
+   één getal per pand. Zo telt het erf of de akker rondom een boerderij niet mee —
+   juist buiten de stad veranderen die van nature sterk (ploegen, gewassen).
+6. **Drempel per omgevingstype.** Panden worden ingedeeld in *stedelijk* of
+   *buitengebied* (op panddichtheid per tegel, `STEDELIJK_VANAF`), en de drempel
+   (percentiel `DREMPEL_PCT`) wordt bínnen elk stratum bepaald. Reden: de
+   score-verdelingen verschillen structureel tussen stad en buitengebied; één
+   globale drempel zou de werkvoorraad vullen met buitengebied-ruis en stedelijke
+   subtiele veranderingen verdringen. Het notebook toont beide verdelingen als
+   histogram, elk met hun eigen drempellijn. Alles boven de eigen drempel is een
+   "visuele detectie" en wordt gesplitst in *verklaard door de BAG* en
+   *onverklaard* (de werkvoorraad).
 
 ## "Kun je niet beter eerst aftrekken en dan berekenen?"
 
@@ -76,6 +84,7 @@ leert zo'n netwerk zelf, en beter.
 | Blur | 1,5 px | Hoger: minder textuurruis, maar kleine objecten (dakraam) vervagen |
 | Verschuivingsbereik | ±8 px (≈ 0,64 m) | Hoger: meer omvalling gedempt, maar echte kleine verplaatsingen worden ook "weggematcht"; trager |
 | Minimale pandgrootte | 25 m² / 12 px | Lager: ook schuurtjes gescoord, maar meer ruis |
+| `STEDELIJK_VANAF` | 6 panden per tegel | Grens stedelijk/buitengebied voor de eigen drempel per stratum |
 | `DREMPEL_PCT` | 99 | Lager (97/95): meer vangst (hogere recall op BAG-mutaties), grotere werkvoorraad |
 
 Kalibreer de drempel met sectie 3b van het notebook: de bekende BAG-mutaties zijn de
