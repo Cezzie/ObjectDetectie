@@ -27,7 +27,9 @@ Draai de genummerde stappen in volgorde — dat is de hele werkcyclus:
 ```
 
 Stap 4 wacht op de training en zet het model met versienummer in `data\models\`
-(los ophalen kan met `.\stappen\5-model-ophalen.ps1`). Daarna begint de cyclus
+(los ophalen kan met `.\stappen\5-model-ophalen.ps1`). Apart spoor:
+`.\stappen\6-mutatiescan.ps1` downloadt heel Etten-Leur voor twee jaargangen
+(± 1 GB, geen GPU nodig) voor het mutatierapport `notebooks\mutaties_etten_leur.ipynb`. Daarna begint de cyclus
 opnieuw bij stap 1 — die pre-annoteert dan automatisch met je nieuwste model.
 Alles is veilig om te herhalen: gedane stappen melden zich en worden overgeslagen,
 en handmatige annotaties worden nooit overschreven.
