@@ -194,6 +194,7 @@ scripts/
   11_verschilbeeld.py     verschilcomposieten uit twee jaargangen (mutatiedetectie)
 notebooks/
   resultaten.ipynb               lokaal overzicht: labelstand, previews, voorspellingen, mutaties
+  mutaties_etten_leur.ipynb      mutatierapport 2022->2025: nieuwbouw, sloop, verschilscores
   kaggle_generate_dataset.ipynb  dataset genereren óp Kaggle (internet aan, CPU)
   kaggle_train_yolo.ipynb        YOLO11-training op Kaggle (GPU)
 data/                     gegenereerde data (niet in git)
