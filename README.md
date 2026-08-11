@@ -199,6 +199,7 @@ notebooks/
   mutaties_etten_leur.ipynb      mutatierapport 2022->2025: nieuwbouw, sloop, verschilscores
   mutaties_etten_leur_v2.ipynb   idem, met contourmasker + drempel per omgevingstype
   mutaties_vergelijking.ipynb    v1 en v2 naast elkaar: recall, ruis, meningsverschillen
+  uitleg_beeld_als_data.ipynb    uitleg: hoe een JPEG een blok getallen wordt (RGB per pixel)
   lokaal/                        (gitvrij) eigen kopieën van notebooks met jouw runs
   kaggle_generate_dataset.ipynb  dataset genereren óp Kaggle (internet aan, CPU)
   kaggle_train_yolo.ipynb        YOLO11-training op Kaggle (GPU)
