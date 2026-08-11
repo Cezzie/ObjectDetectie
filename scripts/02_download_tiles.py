@@ -21,7 +21,7 @@ from shapely.geometry import box, shape
 from shapely.strtree import STRtree
 from tqdm import tqdm
 
-from common import data_pad, laad_config
+from common import data_pad, laad_config, parse_bbox
 from pdok import make_session, tegel_grid, wms_get_map
 
 
@@ -33,12 +33,21 @@ def main() -> None:
     parser.add_argument("--laag", default=None,
                         help="andere jaargang-laag (bijv. 2022_orthoHR); "
                              "uitvoer komt dan in data/tiles_<laag>/")
+    parser.add_argument("--bbox", type=parse_bbox, default=None,
+                        help="RD-bbox die de config overschrijft (eigen gridoorsprong!); "
+                             "gebruik dan ook --map-naam om botsing met bestaande tegels te voorkomen")
+    parser.add_argument("--map-naam", default=None,
+                        help="naam van de uitvoermap onder data/ (standaard tiles of tiles_<laag>)")
     args = parser.parse_args()
 
     cfg = laad_config(args.config)
     foto = cfg["luchtfoto"]
     laag = args.laag or foto["laag"]
-    map_naam = "tiles" if laag == foto["laag"] else f"tiles_{laag}"
+    bbox = args.bbox or cfg["gebied"]["bbox"]
+    if args.bbox and not args.map_naam:
+        raise SystemExit("--bbox verandert de gridoorsprong: geef ook --map-naam op "
+                         "zodat bestaande tegelmappen niet corrupt raken.")
+    map_naam = args.map_naam or ("tiles" if laag == foto["laag"] else f"tiles_{laag}")
     tegel_px = foto["tegelgrootte"]
     tegel_m = tegel_px * foto["resolutie"]
     min_panden = cfg["dataset"]["min_panden_per_tegel"]
@@ -62,7 +71,7 @@ def main() -> None:
     gedownload = 0
     overgeslagen_leeg = 0
 
-    tegels = list(tegel_grid(tuple(cfg["gebied"]["bbox"]), tegel_m, foto["overlap"]))
+    tegels = list(tegel_grid(tuple(bbox), tegel_m, foto["overlap"]))
     try:
         for kolom, rij, tegel_bbox in tqdm(tegels, desc="tegels"):
             if args.max_tegels is not None and gedownload >= args.max_tegels:
