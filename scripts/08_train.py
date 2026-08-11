@@ -28,6 +28,9 @@ def main() -> None:
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--batch", type=int, default=16)
     parser.add_argument("--imgsz", type=int, default=640)
+    parser.add_argument("--device", default=None,
+                        help="reken-apparaat: 0 (NVIDIA), 'mps' (Apple Silicon) of 'cpu'; "
+                             "standaard kiest ultralytics zelf")
     args = parser.parse_args()
 
     try:
@@ -50,6 +53,7 @@ def main() -> None:
 
     runs_map = data_pad(cfg, "runs", ".houder").parent
     model = YOLO(args.model)
+    extra = {"device": args.device} if args.device else {}
     model.train(
         data=str(data_yaml),
         epochs=args.epochs,
@@ -59,6 +63,7 @@ def main() -> None:
         project=str(runs_map),
         name=naam,
         exist_ok=True,
+        **extra,
     )
 
     beste = runs_map / naam / "weights" / "best.pt"
