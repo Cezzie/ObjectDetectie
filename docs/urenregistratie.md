@@ -1,7 +1,7 @@
 # Urenregistratie — ObjectDetectie
 
 **Project:** ObjectDetectie (luchtfoto-objectdetectie & mutatiesignalering BWB)
-**Totaal uren:** 13,25
+**Totaal uren:** 14,00
 
 Gebruik dit bestand voor de dagelijkse urenregistratie van dit project; voeg per
 werkdag een regel toe. De uren zijn een **schatting op basis van commit-tijden**
@@ -14,7 +14,7 @@ werkt het totaal bij.
 |---|---|---|---|---|---|---|---|
 | 06-08-2026 | ObjectDetectie | 0 | Ontwikkeling | Pipeline opgezet: PDOK/BAG-datageneratie, YOLO-dataset + Kaggle-notebooks, Label Studio-lus, stappen-scripts, plan mutatiedetectie | 5,00 | | schatting o.b.v. commits 10:55–15:49 |
 | 11-08-2026 | ObjectDetectie | 1 | Analyse | Mutatierapport Etten-Leur 2022→2025: verschilscore + drempelkalibratie, stratificatie stad/buitengebied, vergelijkings- en uitlegnotebooks | 5,50 | | schatting o.b.v. commits 08:15–13:48 |
-| 12-08-2026 | ObjectDetectie | 1 | Strategie/Ontwikkeling | Ideeën- en strategiedocument + meerjaars-consistentie gebouwd (downloadscript, notebook met datering en sprongmarge, mini-test) | 2,75 | | schatting o.b.v. commits 08:04–ca. 10:45 |
+| 12-08-2026 | ObjectDetectie | 1 | Strategie/Ontwikkeling | Ideeën-/strategiedocument + meerjaars-consistentie (downloadscript, notebook met datering en sprongmarge) + mutatieplek-lokalisatie (hotspot-box) | 3,50 | | schatting o.b.v. commits 08:04–ca. 11:30 |
 
 *Niet in git zichtbaar (zelf aanvullen indien van toepassing): annotatiewerk in Label
 Studio, Kaggle-trainingsruns en devbox-installatie tussen 06-08 en 11-08.*
