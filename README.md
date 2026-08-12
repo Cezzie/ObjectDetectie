@@ -204,6 +204,7 @@ notebooks/
   mutaties_vergelijking.ipynb    v1 en v2 naast elkaar: recall, ruis, meningsverschillen
   uitleg_beeld_als_data.ipynb    uitleg: hoe een JPEG een blok getallen wordt (RGB per pixel)
   mutaties_meerjaars.ipynb       4 jaargangen: mutaties dateren + ruis filteren (sprongmarge)
+  mutaties_embeddings.ipynb      A/B: embedding-afstand (ResNet18) vs pixel-verschilscore
   lokaal/                        (gitvrij) eigen kopieën van notebooks met jouw runs
   kaggle_generate_dataset.ipynb  dataset genereren óp Kaggle (internet aan, CPU)
   kaggle_train_yolo.ipynb        YOLO11-training op Kaggle (GPU)
