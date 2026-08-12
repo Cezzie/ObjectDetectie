@@ -161,6 +161,9 @@ jouw tegels voor, waardoor annoteren corrigeren wordt.
 - **Mutatiedetectie** (zonnepanelen geplaatst, dakkapel gebouwd, verbouwing gestart):
   uitgewerkt plan in [docs/mutatiedetectie.md](docs/mutatiedetectie.md) — PDOK levert
   alle jaargangen op ons vaste tegelgrid, dus voor/na-paren zijn gratis.
+- **Bredere ideeën en strategieën** (embeddings, actief leren, AHN, vergunningen
+  kruisen, proces): [docs/ideeen-en-strategieen.md](docs/ideeen-en-strategieen.md)
+  met moeite-inschatting en prioriteitsadvies.
 
 - **Aanbouw-kandidaten**: verschil tussen BAG-contour en AHN-hoogtemasker (of 3DBAG LoD2.2-dakvlakken).
 - **CIR-luchtfoto** (infrarood, ook op PDOK) om dakvlak van vegetatie te scheiden.
